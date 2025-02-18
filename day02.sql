@@ -45,3 +45,91 @@ alter table productTBL ADD COLUMN descript varchar(100) not null after price;
 
 -- 컬럼 타입 변경 
 ALTER TABLE productTBL MODIFY COLUMN price smallint;
+
+use ssgdb;
+
+show tables;
+select bookname, price
+from book;
+
+select  price , bookname
+from book;
+
+desc book;
+
+select bookid,bookname,publisher,price
+ from book ;
+ 
+ select all publisher
+ from book;
+ 
+ select distinct publisher
+ from book;
+ 
+ SELECT * 
+ FROM book
+ WHERE price < 20000;
+ 
+ -- 3-5 
+ SELECT *  
+ FROM book
+ WHERE price between 10000 AND 20000;
+ 
+SELECT *  
+ FROM book
+ WHERE price >= 10000 AND price <= 20000;
+ 
+ 
+-- 3-6
+SELECT *
+FROM book
+WHERE publisher NOT IN('굿스포츠','대한미디어');
+
+SELECT *
+FROM book
+WHERE publisher = '굿스포츠' OR publisher ='대한미디어';
+
+-- 문자열의 패턴을 비교할때 LIKE 연산자 사용  일부문자가 포함된 문자열 검색 %
+SELECT * 
+FROM  book
+WHERE bookname LIKE '축구의 역사';
+
+
+select bookname from book;
+
+-- 3-8
+SELECT publisher ,bookname
+FROM  book
+WHERE bookname LIKE '%축구%';
+
+-- 3-9
+SELECT * 
+FROM book
+WHERE bookname LIKE '__의%';
+
+-- 3-10
+SELECT * 
+FROM BOOK
+WHERE  bookname Like '%축구%' and price>= 20000;
+
+-- 3-11 
+SELECT *  
+FROM  book
+WHERE  publisher IN('굿스포츠','대한미디어');
+
+-- 3-12  order by 컬럼 오름차순(asc) 내리차순(desc)
+SELECT *
+FROM BOOK
+order by price desc;
+
+-- 3-13 order by 절을 사용하면 특정순서를 지정하여 출력할 수 있다.
+
+SELECT *
+FROM BOOK
+order by price, bookname;
+
+-- 3-14 
+SELECT *
+FROM BOOK
+order by price desc, publisher desc;
+
