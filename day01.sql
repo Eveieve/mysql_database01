@@ -30,3 +30,8 @@ insert into test(id,name) values (1,'sample test data2');
 insert into test(id,name) values (null,'sample test data2');
 -- 최종 입력한 리스트를 데이터베이스에 반영한다. 
 commit;
+
+select * from orders;
+
+
+
