@@ -1,36 +1,33 @@
--- SQLPratice 01
--- 1. SQL의 풀네임과 간단한 정의를 기술하세요
-   
--- 2. SQL 언어 종류 3가지를 기술하세요 
+--  문제 1 모든 사원은 직속 상사 및 직속 직원을 갖는다. 단, 최상위 또는 최하위 직원은 직속 상사 및 직원이 없다. 소속된 사원 중 어떤 사원의 상사로 근무 중인 사원의 총수를 출력하시오(1행)
+SELECT COUNT(distinct manager_id) "직속 상사"
+FROM Employees;
 
--- 3. 각 언어의 대표 명령어 작성하세요 
+select employee_id, last_name  , manager_id from employees;
 
--- 4. SELECT 명령어의 전체 구조를 기술하세요 
+-- 문제2 
+-- 각 사원이 소속된 부서별로 급여 합계, 급여 평균, 급여 최댓값, 급여 최솟값을 집계하고자 한다. 계산된 출력 값은 여섯 자리와 세 자리 구분기호, $ 표시와 함께 출력하고 부서번호의 오름차순 정렬하시오. 단, 부서에 소속되지 않은 사원에 대한 정보는 제외하고, 
+-- 출력 시 머리글은 부서아이디, 급여합계, 급여평균, 급여최댓값, 급여최솟값 별칭(alias) 처리하시오(11행)
 
--- -----------------------------------------------------------------------------------------------------------
--- SQLPratice 02  본인이 작성한 스크립트와 실행 화면  캡쳐하여 보내주세요
+
+SELECT department_id as 부서아이디,
+CONCAT('$', FORMAT(SUM(salary), 0)) as "급여 합계",
+CONCAT('$', FORMAT(AVG(salary), 1)) as "급여 평균",
+CONCAT('$', FORMAT(MAX(salary), 0)) as "급여 최댓값",
+CONCAT('$', FORMAT(MIN(salary), 0)) as "급여 최솟값"
+FROM Employees
+WHERE department_id is NOT NULL
+GROUP BY department_id;
+
+
+
+-- 문제 3
+-- 사원들의 업무별 전체 급여 평균이 $10,000보다 큰 경우를 조회하여 업무, 급여 평균을 출력하시오. 단 업무에 사원(CLERK)이 포함된 경우는 제외하고 전체 급여 평균이 높은 순서대로 출력하시오(7행)
+
+ SELECT job_id, avg(salary) as "급여평균"
+ FROM Employees
+ WHERE  job_id NOT LIKE '%CLERK%'
+ GROUP BY job_id
+ HAVING avg(salary) > 10000
+ ORDER BY avg(salary) DESC;
  
--- 1. 강사강의자료 < 2 MySQL 기반 데이터베이스 < data 디렉토리 < demo_hr.sql 을  source 명령어를 이용하여 hr데이터베이스와 데이터를 생성하세요
--- 2. 사용자 : hr 계정을 만들고 비밀번호는 hr 로 생성하세요
--- 3. hr계정 사용자에게 hr데이터베이스 접근 권한을 모두 부여하세요 
--- 4. hr 계정 테이블관계와 테이블간의 구조를 확인하세요 
--- 5. hr계정으로 접속하여 hr데이터베이스에 접속하세요
--- -----------------------------------------------------------------
--- SQLPratice 03  본인이 작성한 스크립트와 실행 화면  캡쳐하여 보내주세요
  
-   슬랙에 올려드린 테이블생성.pdf 분석하여 ssg 계정에서 ssgdb데이터베이스에 테이블을 만드세요 
-
--- 테이블 수정 (product_ID 새로운 컬럼 추가하세요. 정수형(int)이며 널을 허용하지 않으며 유일한 속성을 가집니다.)
-
--- 테이블 수정 ( product_ID 컬럼 삭제)
-
--- cost 컬럼의 이름을 정수형 (int) pay 로 변경하세요
-
-
--- productName 컬럼 앞에 product_ID 컬럼을 추가 
-
-
--- 테이블에 pay  컬럼 뒤에 descript varchar(50)형 컬럼을  추가 하세요
-
-
--- descript 컬럼의  타입을 text 로 변경하세요 
