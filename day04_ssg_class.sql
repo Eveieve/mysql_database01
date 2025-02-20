@@ -22,5 +22,26 @@ from customer c, orders o where c.custid = o.custid;
  WHERE c.custid = o.custid 
  GROUP BY c.name
  order by c.name;
- 
+-- 3.25 
+   SELECT c.name, b.bookname
+   FROM  customer c, orders o , book b
+   WHERE c.custid = o.custid and o.bookid = b.bookid;
+   
+-- 3.26 
+   select * from book;
+   select * from orders;
+   select * from customer;
+   
+   SELECT c.name, b.bookname , b.price
+   FROM  customer c, orders o , book b
+   WHERE c.custid = o.custid and o.bookid = b.bookid and b.price>= 20000;
+   
+-- 3.27 외부조인(outer join)   
+   
+   SELECT c.name, o.saleprice
+   FROM  customer c LEFT OUTER JOIN orders o 
+   on c.custid = o.custid; 
+   
+   
+   
  
