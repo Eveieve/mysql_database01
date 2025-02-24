@@ -25,16 +25,19 @@ CREATE TABLE Orders (
  CONSTRAINT fk_orders_custid FOREIGN KEY (custid) REFERENCES Customer(custid),
  CONSTRAINT fk_orders_bookid FOREIGN KEY (bookid) REFERENCES Book(bookid)
 );
-
+drop table cust_addr;
 CREATE TABLE  Cust_addr (
 custid      INTEGER,  
-addrid 	   INTEGER auto_increment,  
+addrid 	   INTEGER ,  
 address     VARCHAR(50),
 phone       VARCHAR(20),
 changeday	DATE,
-PRIMARY KEY(custid,addrid),
+PRIMARY KEY(addrid),
 CONSTRAINT fk_cust_addr_custid  FOREIGN KEY (custid) REFERENCES Customer(custid)  
 );
+alter table cust_addr modify addrid integer auto_increment;
+-- 복합키 일경우 오토인크리먼트 전략이 안먹힌다. 이미 addrid로  충분히 식별이 기능하므로 현재 드린 데이터를 기준으로 위 처럼 처리 해주면 됩니다. 
+
 
 CREATE TABLE Cart (
   cartid INTEGER ,
