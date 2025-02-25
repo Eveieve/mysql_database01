@@ -1,15 +1,20 @@
  -- root 계정으로 ssgdb 사용자 정의 데이터베이스 생성 
 create database ssgdb;  
+create database testdb;  
+create database 극장;  
 
 -- ssgdb 데이터베이스를 사용하는 사용자 'ssg' 사용자 패스워드 'ssg1234'
 create user ssg@localhost identified by 'ssg1234';   
 
+
 -- ssg@localhost 사용자에게 ssgdb의 모든 권한을 부여한다. 
 grant all privileges on ssgdb. * to ssg@localhost;
+grant all privileges on testdb. * to ssg@localhost;
+grant all privileges on 극장. * to ssg@localhost;
 
 -- 현재 적용 설정을 최종 반영
 commit;
-
+flush privileges;
 -- 데이터베이스 리스트 보기
 show databases;
 
@@ -33,5 +38,6 @@ commit;
 
 select * from orders;
 
-
+use employees;
+select salary from salaries;
 

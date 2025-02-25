@@ -5,7 +5,7 @@
  FROM Employees e
  WHERE last_name = 'Tucker');
  
- -- HR 부서의 어떤 사원은 급여정보를 조회하는 업무를 맡고 있다. Tucker 사원보다 급여 를 많이 받고 있는 사원의 성과 이름(Name으로 별칭), 업무, 급여를 출력하시오
+ 
  SELECT CONCAT(first_name, ' ', last_name) as "Name", job_id, salary, hire_date
  FROM Employees e1
  WHERE salary IN(SELECT min(salary)
@@ -13,7 +13,24 @@
  WHERE e1.job_id=e2.job_id
  GROUP BY job_id);
 
+-- 사원의 급여 정보 중 업무별 최소 급여를 받는 사원의 성과 이름(Name으로 별칭), 업무,급여, 입사일을 출력하시오
+
+select concat(e1.first_name, ' ', e1.last_name) as 'Name',
+       e1.job_id,
+       e1.salary,
+       e1.hire_date
+from employees e1
+where e1.salary in (select min(e2.salary) from employees e2 group by e2.job_id);
+
 -- 소속 부서의 평균 급여보다 많은 급여를 받는 사원의 성과 이름(Name으로 별칭), 급여,부서번호, 업무를 출력하시오
+elect concat(e1.first_name, ' ', e1.last_name) as 'Name',
+       e1.salary,
+       e1.department_id,
+       e1.job_id
+from employees e1
+where e1.salary > (select avg(e2.salary) from employees e2 group by e1.department_id);
+
+-- 사원들의 지역별 근무 현황을 조회하고자 한다. 도시 이름이 영문 'O'로 시작하는 지역에 살고 있는 사원의 사번, 성과 이름(Name으로 별칭), 업무, 입사일을 출력하시오
  SELECT employee_id, CONCAT(first_name, ' ', last_name) as "Name", job_id, hire_date
  FROM Employees
  WHERE department_id IN (
