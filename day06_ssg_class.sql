@@ -40,6 +40,57 @@ SELECT * FROM BOOK;
 SELECT bookid, replace(bookname,'야구','농구') bookname
 FROM BOOK;
 
+-- 굿스포츠에서 출판한 도서의 제목과 제목의 글자 수를 확인하세요 
+SELECT bookname '제목' , CHAR_LENGTH(bookname) 문자수, LENGTH(bookname) 바이트수
+FROM Book
+WHERE publisher = '굿스포츠';
+
+SELECT SUBSTR(name,1,1) 성 , COUNT(*) 인원 from customer GROUP BY SUBSTR(name,1,1);
+
+-- 3) 날짜 시간 함수 
+
+SELECT SYSDATE();
+SELECT NOW();
+
+-- 
+SELECT orderid 주문번호, orderdate 주문일, ADDDATE(orderdate, interval 10 DAY) 구매확정일
+FROM Orders;
+
+SELECT orderid 주문번호,  date_format(orderdate,'%Y-%m-%d') 주문일
+FROM ORDERS
+WHERE orderdate = STR_TO_DATE('20240707','%Y%m%d');
+
+CREATE TABLE mybook(bookid int , price int);
+INSERT INTO mybook values(1,10000), (2,20000),(3, null);
+commit;
+select * from mybook;
+
+
+
+select price + 100 from mybook where bookid = 3;
+select sum(price) , avg(price),count(*) ,count(price)
+from mybook
+where bookid >= 4;
+
+-- NULL 값을 확인하는 방법  (IN NULL , IS NOT NULL) 아니다 => <>
+
+SELECT * FROM MYBOOK WHERE PRICE IS NULL;
+SELECT * FROM MYBOOK WHERE PRICE = '';
+
+-- IFNULL 함수 => NULL값을 다른 값으로 치환하여 연산한다. 
+SELECT * FROM CUSTOMER;
+
+SELECT name 이름, ifnull(phone ,'연락처없음') 전화번호
+FROM CUSTOMER;
+
+SELECT BOOKID 북아이디, IFNULL(PRICE,0) FROM MYBOOK;
+
+SET   @seq:=9;
+SELECT (@seq:=@seq+1) 순번 ,custid , name, phone
+FROM CUSTOMER;
+-- WHERE  @seq < 2;
+
+
 
 
 
