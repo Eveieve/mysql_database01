@@ -90,6 +90,72 @@ SELECT (@seq:=@seq+1) 순번 ,custid , name, phone
 FROM CUSTOMER;
 -- WHERE  @seq < 2;
 
+use sakila;
+
+-- customer 테이블에서 고객의 이름이 저장된 first_name열을 조회
+desc customer;
+-- customer_id  고객을 유일하게 식별하는 식별자 
+-- store_id  store테이블에서 고객의 '홈스토어'를 식별하는 외래키 
+-- first_name : 이름 last_name : 성
+-- email : 고객의 이메일
+-- address_id :   address 테이블에서 고객의 주소를 식별하는 외래키 
+-- active : 고객이 활성화된 고객인지 여부가 저장
+-- create_date : 고객이 시스템에 가입된 날 
+-- last_update : 행이 수정되었거나 가장 최근 업데이트된 시간이 저장 
+
+-- 전체 열 조회 select * from customer;   자제 요망 
+
+-- ex) 크기 50byte 데이터를 저장할 수 있는 열이 50개 , 행이 1만개 가정하면
+--     쿼리 1줄이 => 50byte x 50 column x 10000 row = 25,000,000byte  => 약25MB      
+
+-- DESC,  DESCRIBE
+-- SHOW COLUMNS FROM SAKILA.customer;  MYSQL에서만 지원되는 명령어 
+
+-- payment 테이블에서 customer_id, amount 열을 조회하는데
+-- customer_id 그룹화(고객별) , 그룹별로 amount 의 값을 합한 결과를 내림차순 정렬한 결과에 따라 ROW_NUMBER함수로 순위를 부여  
+use sakila;
+
+SELECT  customer_id, count(customer_id) from payment group by customer_id;
+
+--  순위 함수 ROW_NUMBER() : 모든 행에 유일한 값으로 순위를 부여 ( 함수를 실행한 결과에 같은 순위가 없다. 만약 같은 순위가 있다면 정렬 순서에 따라 순위를 다르게 부여함) 
+-- 순위를 부여하기 위해 OVER (ORDER BY 열) 
+-- ROW NUMBER() OVER ([PARTITION BY 열] ORDER BY 열)   
+
+SELECT ROW_NUMBER() OVER(ORDER BY amount DESC) AS num , customer_id , amount
+FROM( 
+    SELECT customer_id , SUM(amount) as amount FROM payment GROUP BY customer_id
+  ) as x;
+
+
+SELECT ROW_NUMBER() OVER(ORDER BY amount DESC ,customer_id DESC) AS num , customer_id , amount
+FROM( 
+    SELECT customer_id , SUM(amount) as amount FROM payment GROUP BY customer_id
+  ) as x;
+
+SELECT staff_id , ROW_NUMBER() OVER(PARTITION BY staff_id ORDER BY amount DESC, customer_id ASC) as num, customer_id, amount
+FROM (
+     SELECT customer_id , staff_id , SUM(amount) as amount FROM payment GROUP BY customer_id , staff_id
+) as x;
+
+-- RANK() 우선순위를 고려하지 않고 순위를 부여하는 함수 
+-- RANK() OVER([PARTITIOON BY 열] ORDER BY 열)
+
+SELECT RANK() OVER(ORDER BY amount DESC) as num , customer_id , amount 
+FROM(
+     SELECT  customer_id , sum(amount) as amount from payment group by customer_id
+ ) as x; 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
