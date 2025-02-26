@@ -158,8 +158,58 @@ SELECT JSON_REMOVE(@json_user,'$.usertbl[0]') as 윤종신삭제;
 SELECT JSON_REPLACE(@json_user,'$.usertbl[0].name','김승기');
 
 
+create table jsontest(person json);
+desc jsontest;
+insert into jsontest values('{"name":"윤종신", "height":170, "address":"서울시 성북구"}');
+select * from jsontest;
 
 
 
+SELECT * FROM USERTBL WHERE NAME ='김범수'; 
+-- 김범수 회원이 구매한 물품리스트를 출력 => 김범수 회원이 여러명 있을 수 있으므로 김범수 회원의 아이디를 확인 후 쿼리문을 작성하는게 정확합니다.
+SELECT  * 
+    FROM buytbl 
+       inner join usertbl 
+           on buytbl.userid = usertbl.userid
+       WHERE buytbl.userid = 'KBS';    
 
+-- 구매한 기록이 있는 회원들의 정보만 출력하세요 
+
+SELECT  distinct usertbl.name 
+    FROM buytbl 
+       inner join usertbl 
+           on buytbl.userid = usertbl.userid
+       order by usertbl.userid;    
+-- 우리 쇼핑몰에서 한번이라도 구매한 기록이 있는 회원들에게 쿠폰지급, 안내문 발송 
+
+SELECT  distinct u.name 
+    FROM usertbl u
+        where exists(
+          select * from buytbl b where u.userid = b.userid
+        );
+
+-- 전체회원의 구매 기록을 출력 (단, 구매 기록이 없는 회원도 출력)
+SELECT u.userid, u.name, b.prodname
+FROM usertbl u
+     LEFT OUTER JOIN buytbl b
+       on u.userid = b.userid
+       order by u.userid;
+       
+       
+       
+SELECT u.userid, u.name, b.prodname
+FROM buytbl b
+     RIGHT OUTER JOIN usertbl u
+       on u.userid = b.userid
+       order by u.userid;
+              
+-- 구매이력이 아예 없는 회원 출력 
+       
+ SELECT u.userid, u.name, b.prodname
+FROM usertbl u
+     LEFT OUTER JOIN buytbl b
+       on u.userid = b.userid
+	   WHERE b.prodname is null
+       order by u.userid;
+             
 
