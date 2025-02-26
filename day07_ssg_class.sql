@@ -20,9 +20,9 @@ create table movie(
   movie_film longblob
 ) default charset=utf8mb4;   -- LONGBLOB,LONGTEXT 형식의 한글 처리 문제가 없게 하기 위해 설정 
 
-INSERT INTO movie values(1,'쉰들러 리스트','스필버그','리암 니슨',load_file('C:/movies/Schidler.txt'),load_file('C:/movies/Schidler.mp4'));
-INSERT INTO movie values(2,'쇼생크탈출','프랭크 다라본트','팀 로빈슨/모건 프리먼',load_file('C:/movies/Shawshank.txt'),load_file('C:/movies/Shawshank.mp4'));
-INSERT INTO movie values(3,'라스트모히칸','마이클 만','다니엘 데이 루이스',load_file('C:/movies/Mohicans.txt'),load_file('C:/movies/Mohicans.mp4'));
+INSERT INTO movie values(1,'쉰들러 리스트','스필버그','리암 니슨',load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Schindler.txt'),load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Schindler.mp4'));
+INSERT INTO movie values(2,'쇼생크탈출','프랭크 다라본트','팀 로빈슨/모건 프리먼',load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Shawshank.txt'),load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Shawshank.mp4'));
+INSERT INTO movie values(3,'라스트모히칸','마이클 만','다니엘 데이 루이스',load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Mohican.txt'),load_file('C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Mohican.mp4'));
 commit;
 select * from movie;
 
@@ -90,17 +90,72 @@ FROM pivotTest Group by username;
  SELECT JSON_SEARCH(@json,'one','신세계1') as JSON_SEARCH;  -- 해당 member의 저장 위치를 확인 
  SELECT JSON_SEARCH(@json,'all','신세계1') as JSON_SEARCH;
 
+CREATE TABLE usertbl -- 회원 테이블
+( userID  	CHAR(8) NOT NULL PRIMARY KEY, -- 사용자 아이디(PK)
+  name    	VARCHAR(10) NOT NULL, -- 이름
+  birthYear   INT NOT NULL,  -- 출생년도
+  addr	  	CHAR(2) NOT NULL, -- 지역(경기,서울,경남 식으로 2글자만입력)
+  mobile1	CHAR(3), -- 휴대폰의 국번(011, 016, 017, 018, 019, 010 등)
+  mobile2	CHAR(8), -- 휴대폰의 나머지 전화번호(하이픈제외)
+  height    	SMALLINT,  -- 키
+  mDate    	DATE  -- 회원 가입일
+);
+CREATE TABLE buytbl -- 회원 구매 테이블(Buy Table의 약자)
+(  num 		INT AUTO_INCREMENT NOT NULL PRIMARY KEY, -- 순번(PK)
+   userID  	CHAR(8) NOT NULL, -- 아이디(FK)
+   prodName 	CHAR(6) NOT NULL, --  물품명
+   groupName 	CHAR(4)  , -- 분류
+   price     	INT  NOT NULL, -- 단가
+   amount    	SMALLINT  NOT NULL, -- 수량
+   FOREIGN KEY (userID) REFERENCES usertbl(userID)
+);
 
+INSERT INTO usertbl VALUES('LSG', '이승기', 1987, '서울', '011', '1111111', 182, '2008-8-8');
+INSERT INTO usertbl VALUES('KBS', '김범수', 1979, '경남', '011', '2222222', 173, '2012-4-4');
+INSERT INTO usertbl VALUES('KKH', '김경호', 1971, '전남', '019', '3333333', 177, '2007-7-7');
+INSERT INTO usertbl VALUES('JYP', '조용필', 1950, '경기', '011', '4444444', 166, '2009-4-4');
+INSERT INTO usertbl VALUES('SSK', '성시경', 1979, '서울', NULL  , NULL      , 186, '2013-12-12');
+INSERT INTO usertbl VALUES('LJB', '임재범', 1963, '서울', '016', '6666666', 182, '2009-9-9');
+INSERT INTO usertbl VALUES('YJS', '윤종신', 1969, '경남', NULL  , NULL      , 170, '2005-5-5');
+INSERT INTO usertbl VALUES('EJW', '은지원', 1972, '경북', '011', '8888888', 174, '2014-3-3');
+INSERT INTO usertbl VALUES('JKW', '조관우', 1965, '경기', '018', '9999999', 172, '2010-10-10');
+INSERT INTO usertbl VALUES('BBK', '바비킴', 1973, '서울', '010', '0000000', 176, '2013-5-5');
+INSERT INTO buytbl VALUES(NULL, 'KBS', '운동화', NULL   , 30,   2);
+INSERT INTO buytbl VALUES(NULL, 'KBS', '노트북', '전자', 1000, 1);
+INSERT INTO buytbl VALUES(NULL, 'JYP', '모니터', '전자', 200,  1);
+INSERT INTO buytbl VALUES(NULL, 'BBK', '모니터', '전자', 200,  5);
+INSERT INTO buytbl VALUES(NULL, 'KBS', '청바지', '의류', 50,   3);
+INSERT INTO buytbl VALUES(NULL, 'BBK', '메모리', '전자', 80,  10);
+INSERT INTO buytbl VALUES(NULL, 'SSK', '책'    , '서적', 15,   5);
+INSERT INTO buytbl VALUES(NULL, 'EJW', '책'    , '서적', 15,   2);
+INSERT INTO buytbl VALUES(NULL, 'EJW', '청바지', '의류', 50,   1);
+INSERT INTO buytbl VALUES(NULL, 'BBK', '운동화', NULL   , 30,   2);
+INSERT INTO buytbl VALUES(NULL, 'EJW', '책'    , '서적', 15,   1);
+INSERT INTO buytbl VALUES(NULL, 'BBK', '운동화', NULL   , 30,   2);
 
+SELECT COUNT(*) FROM USERTBL;   -- result : 10 row 
+SELECT COUNT(*) FROM BUYTBL;    -- result : 12 row
 
+COMMIT;
 
+-- @json_user 변수에 usertbl 이름으로  윤종신, 이승기, 임재범의 이름과 키를 저장하는 json 객체를 생성하세요 
+  SET @json_user = '
+      {
+         "usertbl":
+         [
+             {"name":"윤종신", "height":170, "address":"서울시 성북구"},
+             {"name":"이승기", "height":178,"address":"경기도 성남시"},
+             {"name":"임재범", "height":185,"address":"서울시 동작구"}
+             
+          ]
+      
+      } ';
+-- 여러분들이 생성하신 json_user 객체가 json형식에 맞게 정의되었는지 확인해주세요 .   result => 1 
+  SELECT JSON_VALID(@json_user) as 형식확인;
 
-
-
-
-
-
-
+SELECT JSON_INSERT(@json_user,'$.usertbl[0].mDate','2024-03-26');
+SELECT JSON_REMOVE(@json_user,'$.usertbl[0]') as 윤종신삭제;
+SELECT JSON_REPLACE(@json_user,'$.usertbl[0].name','김승기');
 
 
 
