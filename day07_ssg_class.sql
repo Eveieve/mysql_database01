@@ -212,4 +212,125 @@ FROM usertbl u
 	   WHERE b.prodname is null
        order by u.userid;
              
+create table ghostmember(
+ SELECT u.userid, u.name, b.prodname
+FROM usertbl u
+     LEFT OUTER JOIN buytbl b
+       on u.userid = b.userid
+	   WHERE b.prodname is null
+       order by u.userid
+);             
+      select * from ghostmember;   
+desc ghostmember;      
 
+alter table ghostmember add constraint pk_ghostmember primary key (userid);
+             
+-- 서브 쿼리  : 쿼리 안에 또 다른 쿼리 (중첩 쿼리)
+-- 조건 : 1.  반드시 소괄호() 감싸 사용한다.  2. 서브쿼리는 주쿼리를 실행하기 전에 1번만 실행된다. 3. 비교연사자와 함께 서브쿼리를 사용하면 서브쿼리의 위치는 오른쪽이어야 한다. 
+--       4. 서브 쿼리 내부에서는 order by 문을 사용할 수 없다. 
+
+-- 다중행 연산자 :  
+--  1) IN : 서브 쿼리의 결과에 존재하는 임의의 값과 동일한 조건 검색 
+--    2) ANY : 서브 쿼리의 결과에 존재하는 어느 하나의 값이라도 만족하는 조건 검색 
+--    3) ALL : 서브 쿼리의 결과에 존재하는 모든 값을 만족하는 조건 검색 
+--    4) EXISTS : 서브 쿼리의 결과를 만족하는 값이 존재하는지 여부 확인 
+   
+   use sakila;
+   
+   -- customer 테이블 참조하여 (이름)이 first_name 'ROSA' 고객의 정보를 출력하시오(subquery)
+   
+   SELECT *
+   FROM customer
+   WHERE customer_id = (SELECT customer_id from customer where first_name = 'ROSA' );
+   
+             
+ -- customer 테이블 참조하여 (이름)이 first_name 'ROSA','ANA' 고객의 정보를 출력하시오(subquery)         
+  SELECT *
+   FROM customer
+   WHERE customer_id = (SELECT customer_id from customer where first_name IN ('ROSA','ANA') );           
+   -- 에러 결과가 1개 이상의 ROW 반환되었으므로 = 동등연산자로는 연산을 할 수 없다. 
+             SELECT customer_id from customer where first_name IN ('ROSA','ANA1');
+             -- 서브 쿼리에서 다중행 리턴 
+             
+  SELECT *
+   FROM customer
+   WHERE customer_id IN (SELECT customer_id from customer where first_name IN ('ROSA','ANA') );              
+             
+  -- film   film_category  category           
+             
+ desc category; 
+ select * from category limit 10;
+ desc film_category;             
+ select * from film_category limit 10;     
+ desc film;
+             
+-- 위의 3개의 테이블을 조인하여 category가 'Action' 인 film_id 와 제목(title) 출력하세요 (조인, 서브쿼리 작성해주세요)          
+             
+ SELECT  a.film_id, a.title
+ FROM film as a 
+       inner join film_category as b on a.film_id = b.film_id
+       inner join category as c on b.category_id = c.category_id
+ WHERE c.name = 'Action';
+ 
+ -- 스칼라 서브쿼리 
+ SELECT film_id, title
+ FROM film
+ WHERE film_id IN
+ (
+ SELECT film_id
+ FROM film_category as a  inner join category as b on a.category_id = b.category_id where b.name = 'Action');
+ 
+ 
+ -- ANY 
+ -- customer_id 가 112, 181 인 회원의 정보 출력 
+ SELECT * FROM customer WHERE customer_id = ANY (
+ SELECT customer_id FROM customer WHERE first_name IN ('ROSA','ANA')); 
+ 
+ -- customer_id 가 112, 181 보다 작은 값을 조회하여 출력 
+ SELECT * FROM customer WHERE customer_id < ANY (
+ SELECT customer_id FROM customer WHERE first_name IN ('ROSA','ANA'));              
+ 
+ -- customer_id 가 112 , 181 인 데이터보다 큰 값을 조회하여 출력 
+ SELECT * FROM customer WHERE customer_id > ANY (
+ SELECT customer_id FROM customer WHERE first_name IN ('ROSA','ANA'));               
+             
+ -- EXISTS 문은 서브쿼리의 결괏값이 있는지 없는지를 확인해서 1행이라도 있으면 TRUE 없으면 FALSE를 반환함 
+ -- 서브 쿼리의 결과가 1행이라도 있으면 TRUE 가 되어 주쿼리를 실행함.
+ -- 서브 쿼리의 결과가 FALSE 라면 주쿼리는 실행되지 않음 
+ -- NOT EXISTS 는 EXISTS  반대로 동작함
+ SELECT * FROM customer
+     WHERE EXISTS (SELECT customer_id FROM customer where first_name in('ROSA','ANA'));
+             
+SELECT * FROM customer
+     WHERE NOT EXISTS (SELECT customer_id FROM customer where first_name in('ROSA','ANA'));
+     
+-- ALL   where customer_id  =112 and customer_id =181 
+SELECT * FROM customer
+     WHERE customer_id = all (SELECT customer_id FROM customer where first_name in('ROSA','ANA'));    
+     
+-- FROM 문에 서브 쿼리 사용   (인라인뷰) -> inline view 
+-- FROM 절에 서브쿼리를 사용하면 그 결과는 테이블처럼 사용되어 다른 테이블과 다시 조인하여 사용할 수 있다. 
+-- 쿼리를 논리적으로 격리한다. 
+
+SELECT a.film_id, a.title , x.name
+FROM film as a INNER JOIN ( 
+          SELECT b.film_id, c.name
+			FROM film_category as b
+              inner join category as c on b.category_id =c.category_id
+                      where c.name ='Action')as x;
+       
+
+
+ 
+
+
+
+
+
+
+
+
+     
+     
+     
+     
