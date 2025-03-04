@@ -1,5 +1,7 @@
  -- root 계정으로 ssgdb 사용자 정의 데이터베이스 생성 
 create database ssgdb;  
+
+
 create database testdb;  
 create database 극장;  
 
