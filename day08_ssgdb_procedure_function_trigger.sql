@@ -1,7 +1,10 @@
 use ssgdb;
+
 CREATE TABLE IF NOT EXISTS testTBL (id int, txt varchar(20));
 insert into testTBL(id,txt) values (1, '레드벨벳'),(2, '잇지'),(3,'블랙핑크');
+
 set global log_bin_trust_function_creators  = 1;
+
 delimiter //
 create trigger testTrg
     AFTER DELETE
@@ -10,16 +13,16 @@ create trigger testTrg
 BEGIN
     SET @msg = '가수 그룹이 삭제됨';
 end //
-
 delimiter ;
 
 
 set @msg = '';
 insert into testTBL values (4,'마마무');
-
 set @msg = '';
 update testTBL set txt = '블핑' where id = 3;
+
 set @msg = '';
+
 delete from testTBL WHERE ID = 4;
 SELECT @msg;
 
@@ -32,7 +35,7 @@ CREATE TABLE backup_userTbl
   mobile2   CHAR(8),
   height    SMALLINT,
   mDate    DATE,
-  modType  CHAR(2), -- 변경된 타입. '수정' 또는 '삭제'
+  modType  CHAR(2), -- 변경된 타입. '수정' 또는 '삭제' 를 저장한다. 
   modDate  DATE, -- 변경된 날짜
   modUser  VARCHAR(256) -- 변경한 사용자
 );
